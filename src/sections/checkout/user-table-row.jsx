@@ -1,28 +1,32 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
+// import Stack from '@mui/material/Stack';
+// import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 // import IconButton from '@mui/material/IconButton';
 
-import Label from 'src/components/label';
+// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
   selected,
+  cedula,
   nombre,
   avatarUrl,
   apellido,
   correo,
   fecha,
+  ciudad,
   estado,
+  metodo_pago,
+  direccion,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
@@ -47,24 +51,17 @@ export default function UserTableRow({
   return (
     <>
       <TableRow hover tabIndex={-1}>
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={nombre} src={avatarUrl} />
-            <Typography variant="subtitle2" noWrap>
-              {nombre}
-            </Typography>
-          </Stack>
-        </TableCell>
+        <TableCell>{cedula}</TableCell>
+        <TableCell>{nombre}</TableCell>
 
         <TableCell>{apellido}</TableCell>
 
         <TableCell>{correo}</TableCell>
-
+        <TableCell>{estado}</TableCell>
+        <TableCell>{ciudad}</TableCell>
+        <TableCell>{direccion}</TableCell>
+        <TableCell>{metodo_pago}</TableCell>
         <TableCell align="center">{formattedFecha}</TableCell>
-
-        <TableCell>
-          <Label color={estado === 'cancelado' ? 'error' : 'success'}>{estado}</Label>
-        </TableCell>
 
         {/* <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -106,4 +103,8 @@ UserTableRow.propTypes = {
   correo: PropTypes.any,
   selected: PropTypes.any,
   estado: PropTypes.string,
+  ciudad: PropTypes.string,
+  metodo_pago: PropTypes.string,
+  cedula: PropTypes.string,
+  direccion: PropTypes.string,
 };

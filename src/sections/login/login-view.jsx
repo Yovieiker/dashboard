@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -12,8 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-
-import { useRouter } from 'src/routes/hooks';
+// import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
 
@@ -23,24 +23,71 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
+  const [correo, setCorreo] = useState('');
+  const [clave, setClave] = useState('');
+  const [token, setToken] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:4000/api/users/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ correo, clave }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const tokenLogin = data.token;
+        const idUser = data.idAdmin;
+        const roles = data.rol;
+        const nombreAdmin = data.nombre;
+        const apellidoAdmin = data.apellido;
+        const emailAdmin = data.email;
+
+        // Guardar el token en el estado del componente y en el localStorage
+        setToken(tokenLogin);
+        localStorage.setItem('token', tokenLogin);
+        localStorage.setItem('idUser', idUser);
+        localStorage.setItem('rol', roles);
+        localStorage.setItem('nombre', nombreAdmin);
+        localStorage.setItem('apellido', apellidoAdmin);
+        localStorage.setItem('email', emailAdmin);
+
+        console.log(token);
+        navigate('/');
+        window.location.reload();
+      } else {
+        // Manejar el caso de error en la petición de login
+        console.error('Error en la petición de login:', response.status);
+      }
+    } catch (error) {
+      console.error('Error en la petición de login:', error);
+    }
+  };
+
   const theme = useTheme();
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    router.push('/dashboard');
-  };
+  // const handleClick = () => {
+  //   router.push('/dashboard');
+  // };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField name="email" label="Email address" onChange={(e) => setCorreo(e.target.value)} />
 
         <TextField
           name="password"
           label="Password"
+          onChange={(e) => setClave(e.target.value)}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -66,7 +113,7 @@ export default function LoginView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        onClick={handleLogin}
       >
         Login
       </LoadingButton>

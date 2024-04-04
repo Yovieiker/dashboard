@@ -22,11 +22,11 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function CanceladoPage() {
   const [users, setUsers] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch('http://localhost:4000/api/users');
+      const response = await fetch('http://localhost:4000/api/users/cancelados');
       const data = await response.json();
       setUsers(data);
       console.log(data); // Usar la variable `data` en lugar de `users`

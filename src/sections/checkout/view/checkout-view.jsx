@@ -22,11 +22,11 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function CheckoutPage() {
   const [users, setUsers] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch('http://localhost:4000/api/users');
+      const response = await fetch('http://localhost:4000/api/checkout/datos');
       const data = await response.json();
       setUsers(data);
       console.log(data); // Usar la variable `data` en lugar de `users`
@@ -96,8 +96,8 @@ export default function UserPage() {
 
   const dataFiltered = applyFilter({
     inputData: users,
-    filterName,
     comparator: getComparator(order, orderBy),
+    filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
@@ -105,7 +105,7 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Usuarios registrado</Typography>
+        <Typography variant="h4">Usuarios ya hicieron compras</Typography>
       </Stack>
 
       <Card>
@@ -121,35 +121,41 @@ export default function UserPage() {
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={dataFiltered.length}
+                rowCount={users.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
+                  { id: 'cedula', label: 'cedula' },
                   { id: 'nombre', label: 'nombre' },
                   { id: 'apellido', label: 'Apellido' },
                   { id: 'correo', label: 'Correo' },
-                  { id: 'fecha', label: 'Fecha', align: 'center' },
                   { id: 'estado', label: 'Estado' },
-                  { id: '' },
+                  { id: 'ciudad', label: 'Ciudad' },
+                  { id: 'direccion', label: 'Direccion' },
+                  { id: 'metodo_pago', label: 'Metodo de pago' },
+                  { id: 'fecha', label: 'Fecha', align: 'center' },
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      nombre={row.nombre}
-                      correo={row.email}
-                      estado={row.estado}
-                      apellido={row.apellido}
-                      avatarUrl={row.avatarUrl}
-                      fecha={row.fecha_registro}
-                      selected={selected.includes(`${row.nombre} ${row.apellido}`)}
-                      handleClick={(event) => handleClick(event, `${row.nombre} ${row.apellido}`)}
-                    />
-                  ))}
+                {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                  <UserTableRow
+                    key={row.id}
+                    cedula={row.cedula}
+                    nombre={row.nombre}
+                    correo={row.email}
+                    estado={row.departamento}
+                    apellido={row.apellido}
+                    avatarUrl={row.avatarUrl}
+                    ciudad={row.ciudad}
+                    direccion={row.direccion}
+                    metodo_pago={row.metodo_pago}
+                    fecha={row.fecha_del_checkout}
+                    selected={selected.indexOf(row.name) !== -1}
+                    handleClick={(event) => handleClick(event, row.name)}
+                  />
+                ))}
+
                 <TableEmptyRows
                   height={77}
                   emptyRows={emptyRows(page, rowsPerPage, users.length)}
